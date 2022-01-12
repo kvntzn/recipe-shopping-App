@@ -5,6 +5,9 @@ import { RecipeService } from "../recipes/recipe.service";
 
 @Injectable({ providedIn: "root" })
 export class DataStorageService {
+  private RECIPE_URL =
+    "https://ng-course-recipe-book-6c44e-default-rtdb.firebaseio.com/recipes.json";
+
   constructor(
     private http: HttpClient,
     private recipesService: RecipeService
@@ -12,13 +15,16 @@ export class DataStorageService {
 
   storeRecipes() {
     const recipes = this.recipesService.getRecipes();
-    this.http
-      .put(
-        "https://ng-course-recipe-book-6c44e-default-rtdb.firebaseio.com/recipes.json",
-        recipes
-      )
-      .subscribe((response) => {
-        console.log(response);
-      });
+    this.http.put(this.RECIPE_URL, recipes).subscribe((response) => {
+      console.log(response);
+    });
+  }
+
+  fetchRecipes() {
+    this.http.get<Recipe[]>(this.RECIPE_URL).subscribe((recipes) => {
+      console.log(recipes);
+      this.recipesService.setRecipes(recipes);
+    });
+    // this.recipesService.
   }
 }
